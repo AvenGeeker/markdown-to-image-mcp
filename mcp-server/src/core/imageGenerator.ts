@@ -1,5 +1,8 @@
 import { MarkdownRenderer } from './renderer.js';
 import { GenerateMarkdownPosterParams, GenerateResult, RenderOptions, OptimizeOptions } from '../types.js';
+import fs from 'fs/promises';
+import path from 'path';
+import os from 'os';
 
 export class ImageGenerator {
   private renderer: MarkdownRenderer;
@@ -26,7 +29,8 @@ export class ImageGenerator {
         format = 'png',
         quality = 90,
         width = 800,
-        height = 600
+        height = 600,
+        outputPath // Custom output path
       } = options;
 
       // Validate inputs
@@ -60,9 +64,31 @@ export class ImageGenerator {
         quality
       });
 
-      // Convert to base64
-      const imageData = await this.convertToBase64(optimizedBuffer);
-
+      // Determine file path
+      let filePath: string;
+      if (outputPath) {
+        // Use custom output path
+        filePath = outputPath;
+        // Ensure the directory exists
+        const dir = path.dirname(filePath);
+        await fs.mkdir(dir, { recursive: true });
+      } else {
+        // Generate a unique filename in temp directory
+        const timestamp = Date.now();
+        const randomString = Math.random().toString(36).substring(2, 15);
+        const fileName = `markdown-poster-${timestamp}-${randomString}.${format}`;
+        
+        // Create temp directory if it doesn't exist
+        const tempDir = path.join(os.tmpdir(), 'mcp-images');
+        await fs.mkdir(tempDir, { recursive: true });
+        
+        // Save image to file
+        filePath = path.join(tempDir, fileName);
+      }
+      
+      // Save image to file
+      await fs.writeFile(filePath, optimizedBuffer);
+      
       // Get metadata
       const metadata = {
         width,
@@ -73,7 +99,7 @@ export class ImageGenerator {
 
       return {
         success: true,
-        imageData,
+        imageUrl: filePath, // Return file path instead of base64 data
         metadata
       };
 

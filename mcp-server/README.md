@@ -10,6 +10,7 @@ A Model Context Protocol (MCP) server that converts Markdown content into beauti
 - **Customizable Output**: Support for different sizes, aspect ratios, and image formats
 - **Server-Side Rendering**: Uses React SSR for consistent rendering
 - **High-Quality Images**: Puppeteer-based rendering for crisp, high-resolution images
+- **Base64 to Image Conversion**: Convert Base64 encoded image data to PNG or JPG format
 
 ## Available Tools
 
@@ -39,6 +40,18 @@ Get a list of all available templates with their supported aspect ratios.
 
 ### 4. previewMarkdown
 Preview markdown content as HTML before generating the actual image.
+
+### 5. convertBase64ToImage
+Convert Base64 encoded image data to PNG or JPG format.
+
+**Parameters:**
+- `base64Data` (required): Base64 encoded image data
+- `format` (optional): Output format (`png`, `jpeg`), defaults to `png`
+- `quality` (optional): Image quality for JPEG (1-100), defaults to 90
+
+**Returns:**
+- Base64 encoded image data in the specified format
+- Image metadata (format, file size)
 
 ## Available Resources
 

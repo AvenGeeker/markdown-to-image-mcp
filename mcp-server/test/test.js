@@ -78,13 +78,13 @@ async function testImageGeneration() {
       try {
         const result = await imageGenerator.generateFromMarkdown(testMarkdown, config.options);
         
-        if (result.success && result.imageData) {
+        if (result.success && result.imageUrl) {
+          // Copy the generated image from temp directory to test output
           const filename = `test-${config.name.toLowerCase().replace(/\\s+/g, '-')}.${config.options.format}`;
           const outputPath = path.join(outputDir, filename);
           
-          // Save the base64 image to file
-          const imageBuffer = Buffer.from(result.imageData, 'base64');
-          fs.writeFileSync(outputPath, imageBuffer);
+          // Copy file from temp location to test output
+          fs.copyFileSync(result.imageUrl, outputPath);
           
           console.log(`  ✓ Generated: ${filename}`);
           console.log(`  ✓ Size: ${result.metadata.width}x${result.metadata.height}`);
@@ -96,6 +96,29 @@ async function testImageGeneration() {
       } catch (error) {
         console.log(`  ✗ Error: ${error.message}`);
       }
+    }
+
+    // Test custom output path
+    console.log('\\n📂 Testing custom output path...');
+    const customOutputPath = path.join(outputDir, 'custom-output-test.png');
+    const customPathResult = await imageGenerator.generateFromMarkdown(testMarkdown, {
+      theme: 'blue',
+      size: 'mobile',
+      format: 'png',
+      outputPath: customOutputPath
+    });
+    
+    if (customPathResult.success && customPathResult.imageUrl) {
+      console.log('  ✓ Custom output path test successful');
+      console.log(`  ✓ Image saved to: ${customPathResult.imageUrl}`);
+      // Verify the file exists at the custom path
+      if (fs.existsSync(customOutputPath)) {
+        console.log('  ✓ Custom output file exists');
+      } else {
+        console.log('  ✗ Custom output file not found');
+      }
+    } else {
+      console.log(`  ✗ Custom output path test failed: ${customPathResult.error}`);
     }
 
     console.log('\\n🧪 Testing tools...');

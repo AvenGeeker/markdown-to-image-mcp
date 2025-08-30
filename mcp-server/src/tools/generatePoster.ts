@@ -104,6 +104,10 @@ export class GeneratePosterTool {
             maximum: 4000,
             description: 'Custom height in pixels',
             default: 600
+          },
+          outputPath: {
+            type: 'string',
+            description: 'Custom output path for the generated image file'
           }
         },
         required: ['markdown']

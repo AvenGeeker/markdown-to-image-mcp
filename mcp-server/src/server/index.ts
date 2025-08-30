@@ -14,6 +14,7 @@ import { GeneratePosterTool } from '../tools/generatePoster.js';
 import { ListThemesTool } from '../tools/listThemes.js';
 import { ListTemplatesTool } from '../tools/listTemplates.js';
 import { PreviewMarkdownTool } from '../tools/previewMarkdown.js';
+import { ConvertBase64ToImageTool } from '../tools/convertBase64ToImage.js';
 
 // Import resources
 import { ThemesResource } from '../resources/themes.js';
@@ -25,6 +26,7 @@ class MarkdownPosterMCPServer {
   private listThemesTool: ListThemesTool;
   private listTemplatesTool: ListTemplatesTool;
   private previewMarkdownTool: PreviewMarkdownTool;
+  private convertBase64ToImageTool: ConvertBase64ToImageTool;
 
   constructor() {
     this.server = new Server(
@@ -45,6 +47,7 @@ class MarkdownPosterMCPServer {
     this.listThemesTool = new ListThemesTool();
     this.listTemplatesTool = new ListTemplatesTool();
     this.previewMarkdownTool = new PreviewMarkdownTool();
+    this.convertBase64ToImageTool = new ConvertBase64ToImageTool();
 
     this.setupHandlers();
   }
@@ -58,6 +61,7 @@ class MarkdownPosterMCPServer {
           ListThemesTool.getToolDefinition(),
           ListTemplatesTool.getToolDefinition(),
           PreviewMarkdownTool.getToolDefinition(),
+          ConvertBase64ToImageTool.getToolDefinition(),
         ],
       };
     });
@@ -111,6 +115,18 @@ class MarkdownPosterMCPServer {
                 {
                   type: 'text',
                   text: JSON.stringify(preview, null, 2),
+                },
+              ],
+            };
+          }
+
+          case 'convertBase64ToImage': {
+            const result = await this.convertBase64ToImageTool.execute(args as any);
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: JSON.stringify(result, null, 2),
                 },
               ],
             };

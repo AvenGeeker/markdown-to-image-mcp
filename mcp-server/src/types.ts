@@ -33,6 +33,7 @@ export interface GenerateMarkdownPosterParams {
   quality?: number; // 1-100
   width?: number;
   height?: number;
+  outputPath?: string; // Custom output path for the generated image
 }
 
 // Generate result
@@ -85,4 +86,23 @@ export interface RenderOptions {
 export interface OptimizeOptions {
   format: ImageFormat;
   quality: number;
+}
+
+// Convert Base64 to Image parameters
+export interface ConvertBase64ToImageParams {
+  base64Data: string;
+  format?: 'png' | 'jpeg';
+  quality?: number; // 1-100
+}
+
+// Convert Base64 to Image result
+export interface ConvertBase64ToImageResult {
+  success: boolean;
+  imageData?: string; // Base64 encoded image data
+  imageUrl?: string; // Temporary image URL
+  metadata: {
+    format: string;
+    size: number; // File size in bytes
+  };
+  error?: string;
 }
