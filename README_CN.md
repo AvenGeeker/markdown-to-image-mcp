@@ -20,18 +20,20 @@
 - [x] 支持一键部署到 Vercel 等
 - [x] 已集成图片跨域代理，可以方便的插入在线图片生成图文海报
 - [x] 支持复制为HTML 代码，可粘贴到电子邮件和一些编辑器中
-- [ ] 更多内置模板
+- [x] 提供 Model Context Protocol (MCP) 服务，支持 AI 助手直接调用
+- [x] 支持 Base64 图片转换为本地文件
 
 ## 如何使用
 
 有两种使用 markdown-to-image 的方式：
 
-- 在项目中集成：markdown-to-image 已导出为一个 React 组件，可以直接集成到您自己的项目中。
+- 在项目中集成：`<Md2Poster>` 已导出为一个 React 组件，可以直接集成到您自己的项目中。
 - 使用WEB UI：example路径中自带了一个 WEB Editor，部署后，可以当做在线编辑器使用。
+- 使用MCP服务：通过 MCP 协议调用服务，支持 AI 助手直接生成海报图片。
 
 ### 在你的项目中集成
 
-`markdown-to-image`导出了一个叫 Md2Poster 的组件以及其他三个子组件，你可以通过 npm 等安装使用。
+`<Md2Poster>`导出了一个叫 Md2Poster 的组件以及其他三个子组件，你可以通过 npm 等安装使用。
 
 #### 安装
 
@@ -95,6 +97,59 @@ return (
 #### 部署自己的在线编辑器
 
 这里使用Vercel进行部署，点击后一键部署：[部署 Editor 到 Vercel](https://vercel.com/new/clone?repository-url=https://github.com/gcui-art/markdown-to-image&root-directory=example&project-name=markdown-to-image&repository-name=markdown-to-image)
+
+### 使用MCP服务
+
+项目提供了一个基于 Model Context Protocol (MCP) 的服务，允许 AI 助手直接调用生成海报图片的功能。
+
+#### 启动MCP服务
+
+```bash
+cd mcp-server
+npm install
+npm run build
+npm start
+```
+
+#### MCP工具说明
+
+1. **generateMarkdownPoster**: 将 Markdown 内容转换为海报图片并保存为本地文件
+2. **convertBase64ToImage**: 将 Base64 编码的图片数据转换为 PNG 或 JPEG 格式并保存为本地文件
+3. **listThemes**: 获取所有可用主题列表
+4. **listTemplates**: 获取所有可用模板列表
+5. **previewMarkdown**: 预览 Markdown 渲染效果
+
+#### Markdown转海报图片调用示例
+
+``json
+{
+  "tool": "generateMarkdownPoster",
+  "arguments": {
+    "markdown": "# Hello World\n\nThis is a **beautiful** poster!",
+    "theme": "SpringGradientWave",
+    "size": "mobile",
+    "outputPath": "/path/to/custom/output/image.png"
+  }
+}
+```
+
+工具会将生成的海报图片保存到以下位置之一：
+1. 如果指定了 `outputPath` 参数，则保存到指定路径
+2. 如果未指定 `outputPath` 参数，则保存到临时目录
+
+无论哪种情况，都会在返回结果中提供文件路径。
+
+#### Base64图片转换调用示例
+
+``json
+{
+  "tool": "convertBase64ToImage",
+  "arguments": {
+    "base64Data": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
+    "format": "png"
+  }
+}
+```
 
 ## 贡献指南
 
@@ -167,4 +222,3 @@ function Editor() {
 }
 
 export default Editor
-```

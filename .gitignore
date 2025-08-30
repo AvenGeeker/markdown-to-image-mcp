@@ -13,6 +13,8 @@ dist-ssr
 *.local
 .qoder
 
+test-output
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

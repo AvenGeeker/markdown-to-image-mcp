@@ -20,7 +20,8 @@ This React component renders Markdown as visually appealing social media images.
 - [x] One-click deployment to platforms like Vercel
 - [x] Integrated image CORS proxy for easy insertion of online images into posters
 - [x] Copy output as HTML code for pasting into emails and editors
-- [ ] More built-in templates
+- [x] Model Context Protocol (MCP) server for AI assistant integration
+- [x] Base64 to image conversion tool for AI workflows
 
 ## Getting Started
 
@@ -28,6 +29,7 @@ There are two ways to use markdown-to-poster:
 
 1. Integration: markdown-to-poster is exported as a React component that can be seamlessly integrated into your projects.
 2. Using Web Editor: The example path includes a web editor that can be deployed and used as an online editor.
+3. Using MCP Server: The mcp-server directory contains an MCP server that can be used with AI assistants.
 
 ### Integration
 
@@ -91,6 +93,105 @@ return (
 #### Deploying Your Own Web Editor
 
 [Deploy Editor with Vercel](https://vercel.com/new/clone?repository-url=https://github.com/gcui-art/markdown-to-image&root-directory=example&project-name=markdown-to-image&repository-name=markdown-to-image)
+
+### Using the MCP Server
+
+The MCP server allows AI assistants to generate poster images from markdown content. It provides several tools:
+
+1. `generateMarkdownPoster` - Generate a poster image from markdown content
+2. `listThemes` - List all available themes
+3. `listTemplates` - List all available templates
+4. `previewMarkdown` - Preview markdown content as HTML
+5. `convertBase64ToImage` - Convert Base64 encoded image data to PNG or JPG format
+
+#### Installation
+
+```bash
+cd mcp-server
+npm install
+npm run build
+```
+
+#### Running the Server
+
+```bash
+npm start
+```
+
+#### MCP Tool: generateMarkdownPoster
+
+This tool allows AI assistants to generate poster images from Markdown content and save them as local files:
+
+**Parameters:**
+- `markdown` (required): Markdown content to render as a poster
+- `theme` (optional): Theme to apply (`blue`, `pink`, `purple`, `green`, `yellow`, `gray`, `red`, `indigo`, `SpringGradientWave`), defaults to `blue`
+- `template` (optional): Template layout (`QuoteCard`, `NewsDigest`), defaults to `QuoteCard`
+- `aspectRatio` (optional): Aspect ratio (`auto`, `16/9`, `1/1`, `4/3`), defaults to `auto`
+- `size` (optional): Size preset (`desktop`, `mobile`), defaults to `mobile`
+- `format` (optional): Output format (`png`, `jpeg`), defaults to `png`
+- `quality` (optional): Image quality for JPEG (1-100), defaults to 90
+- `width` (optional): Custom width in pixels (100-4000), defaults to 800
+- `height` (optional): Custom height in pixels (100-4000), defaults to 600
+- `outputPath` (optional): Custom output path for the generated image file
+
+**Returns:**
+- `imageUrl`: Local file path to the generated poster image
+- Image metadata (width, height, format, file size)
+
+Example MCP request:
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "generateMarkdownPoster",
+    "arguments": {
+      "markdown": "# Hello World\n\nThis is a **beautiful** poster!",
+      "theme": "SpringGradientWave",
+      "size": "mobile",
+      "outputPath": "/path/to/custom/output/image.png"
+    }
+  }
+}
+```
+
+The generated poster image will be saved to either:
+1. The specified `outputPath` if provided
+2. A temporary directory if no `outputPath` is specified
+
+In both cases, the file path will be returned in the `imageUrl` field.
+
+#### MCP Tool: convertBase64ToImage
+
+This tool allows AI assistants to convert Base64 encoded image data to PNG or JPG format and save as a local file:
+
+**Parameters:**
+- `base64Data` (required): Base64 encoded image data
+- `format` (optional): Output format (`png`, `jpeg`), defaults to `png`
+- `quality` (optional): Image quality for JPEG (1-100), defaults to 90
+
+**Returns:**
+- `imageUrl`: Local file path to the converted image
+- Image metadata (format, file size)
+
+Example MCP request:
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "convertBase64ToImage",
+    "arguments": {
+      "base64Data": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
+      "format": "png"
+    }
+  }
+}
+```
+
+The converted image will be saved to a temporary directory and the file path will be returned in the `imageUrl` field.
 
 ## Contributing
 
@@ -163,4 +264,3 @@ function Editor() {
 }
 
 export default Editor
-```

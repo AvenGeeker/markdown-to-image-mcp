@@ -79,7 +79,7 @@ class ImageGenerator {
 #### generateMarkdownPoster
 - **功能**: 生成 markdown 海报图片
 - **参数**: markdown 内容、主题、模板、尺寸等
-- **返回**: Base64 编码的图片数据和元数据
+- **返回**: 本地图片文件路径和元数据（不再返回Base64数据）
 
 #### listThemes
 - **功能**: 获取可用主题列表
@@ -200,7 +200,7 @@ npm run test:manual
 - 支持无头浏览器的环境
 
 ### Docker 部署
-```dockerfile
+``dockerfile
 FROM node:18-alpine
 RUN apk add --no-cache chromium
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
